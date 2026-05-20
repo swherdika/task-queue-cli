@@ -36,18 +36,26 @@ void TaskQueue::setPriority(int id, TaskPriority priority) {
 }
 
 void TaskQueue::processNext() {
-    auto it = std::find_if(tasks.begin(), tasks.end(),
-        [](const Task& t) { return t.status == TaskStatus::PENDING; });
+    auto highest = tasks.end();
 
-    if (it == tasks.end()) {
+    for (auto it = tasks.begin(); it != tasks.end(); ++it) {
+        if (it->status != TaskStatus::PENDING) continue;
+
+        if (highest == tasks.end() ||
+            static_cast<int>(it->priority) > static_cast<int>(highest->priority)) {
+            highest = it;
+        }
+    }
+
+    if (highest == tasks.end()) {
         std::cout << "No pending tasks.\n";
         return;
     }
 
-    it->status = TaskStatus::PROCESSING;
-    std::cout << "Processing: [" << it->id << "] " << it->name << "\n";
-    it->status = TaskStatus::DONE;
-    std::cout << "Done: [" << it->id << "] " << it->name << "\n";
+    highest->status = TaskStatus::PROCESSING;
+    std::cout << "Processing: [" << highest->id << "] " << highest->name << "\n";
+    highest->status = TaskStatus::DONE;
+    std::cout << "Done: [" << highest->id << "] " << highest->name << "\n";
 }
 
 void TaskQueue::listTasks() const {
