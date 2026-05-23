@@ -19,6 +19,7 @@ void printHelp() {
     std::cout << "  priority <id> <level>   Update a task's priority\n";
     std::cout << "  help                    Show this help message\n";
     std::cout << "  exit                    Exit the program\n";
+    std::cout << "  clear                   Clear all completed tasks\n";
     std::cout << "----------------------\n\n";
 }
 
@@ -77,6 +78,8 @@ int main() {
             std::string level;
             iss >> id >> level;
             queue.setPriority(id, parsePriority(level));
+        } else if (command == "clear") {
+            queue.clearDone();
         } else if (!command.empty()) {
             std::cout << "Unknown command: " << command << ". Type 'help' to see commands.\n";
         }

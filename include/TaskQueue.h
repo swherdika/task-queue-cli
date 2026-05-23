@@ -21,4 +21,5 @@ public:
     void listTasks() const;
     void showStatus() const;
     void setPriority(int id, TaskPriority priority);
+    void clearDone();
 };

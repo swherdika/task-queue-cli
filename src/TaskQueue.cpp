@@ -100,3 +100,15 @@ void TaskQueue::showStatus() const {
     std::cout << "Done:       " << done << "\n";
     std::cout << "--------------\n\n";
 }
+
+void TaskQueue::clearDone() {
+    auto it = tasks.begin();
+    while (it != tasks.end()) {
+        if (it->status == TaskStatus::DONE) {
+            it = tasks.erase(it);
+        } else {
+            ++it;
+        }
+    }
+    std::cout << "Cleared all completed tasks.\n";
+}
