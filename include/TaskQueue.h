@@ -22,4 +22,6 @@ public:
     void showStatus() const;
     void setPriority(int id, TaskPriority priority);
     void clearDone();
+    void save(const std::string& filepath) const;
+    void load(const std::string& filepath); 
 };

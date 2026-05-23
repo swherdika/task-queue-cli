@@ -25,8 +25,10 @@ void printHelp() {
 
 int main() {
     TaskQueue queue;
-    std::string line;
+    const std::string savePath = "data/tasks.csv";
+    queue.load(savePath);
 
+    std::string line;
     printHelp();
 
     while (true) {
@@ -38,6 +40,7 @@ int main() {
         iss >> command;
 
         if (command == "exit") {
+            queue.save(savePath);
             break;
         } else if (command == "help") {
             printHelp();
@@ -47,6 +50,7 @@ int main() {
             queue.showStatus();
         } else if (command == "process") {
             queue.processNext();
+            queue.save(savePath);
         } else if (command == "add") {
             std::string name, priority, extra;
 
@@ -69,17 +73,21 @@ int main() {
             }
 
             queue.addTask(name, parsePriority(priority));
+            queue.save(savePath);
         } else if (command == "remove") {
             int id;
             iss >> id;
             queue.removeTask(id);
+            queue.save(savePath);
         } else if (command == "priority") {
             int id;
             std::string level;
             iss >> id >> level;
             queue.setPriority(id, parsePriority(level));
+            queue.save(savePath);
         } else if (command == "clear") {
             queue.clearDone();
+            queue.save(savePath);
         } else if (!command.empty()) {
             std::cout << "Unknown command: " << command << ". Type 'help' to see commands.\n";
         }

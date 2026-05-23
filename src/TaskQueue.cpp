@@ -1,5 +1,7 @@
 #include <iostream>
 #include <algorithm>
+#include <fstream>
+#include <sstream>
 #include "TaskQueue.h"
 
 TaskQueue::TaskQueue() : nextId(1) {
@@ -111,4 +113,49 @@ void TaskQueue::clearDone() {
         }
     }
     std::cout << "Cleared all completed tasks.\n";
+}
+
+void TaskQueue::save(const std::string& filepath) const {
+    std::ofstream file(filepath);
+    if (!file.is_open()) {
+        std::cout << "Warning: could not save tasks to " << filepath << "\n";
+        return;
+    }
+    for (const Task& t : tasks) {
+        file << t.id << ","
+             << t.name << ","
+             << t.priorityToString() << ","
+             << t.statusToString() << "\n";
+    }
+}
+
+void TaskQueue::load(const std::string& filepath) {
+    std::ifstream file(filepath);
+    if (!file.is_open()) return; // no save file yet, silent
+
+    std::string line;
+    while (std::getline(file, line)) {
+        std::istringstream iss(line);
+        std::string idStr, name, priorityStr, statusStr;
+
+        std::getline(iss, idStr, ',');
+        std::getline(iss, name, ',');
+        std::getline(iss, priorityStr, ',');
+        std::getline(iss, statusStr, ',');
+
+        int id = std::stoi(idStr);
+        TaskPriority priority = TaskPriority::NORMAL;
+        if (priorityStr == "HIGH") priority = TaskPriority::HIGH;
+        if (priorityStr == "LOW")  priority = TaskPriority::LOW;
+
+        TaskStatus status = TaskStatus::PENDING;
+        if (statusStr == "DONE") status = TaskStatus::DONE;
+
+        Task t(id, name, priority);
+        t.status = status;
+        tasks.push_back(t);
+
+        if (id >= nextId) nextId = id + 1;
+    }
+    std::cout << "Tasks loaded.\n";
 }
