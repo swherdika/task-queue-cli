@@ -59,18 +59,32 @@ void TaskQueue::processNext() {
 }
 
 void TaskQueue::listTasks() const {
-    if (tasks.empty()) {
-        std::cout << "Queue is empty.\n";
-        return;
-    }
-    std::cout << "\n--- Task Queue ---\n";
+    bool hasPending = false;
+    bool hasDone = false;
+
+    std::cout << "\n--- PENDING ---\n";
     for (const Task& t : tasks) {
-        std::cout << "[" << t.id << "] "
-                  << t.name
-                  << " | " << t.priorityToString()
-                  << " | " << t.statusToString() << "\n";
+        if (t.status == TaskStatus::PENDING) {
+            std::cout << "[" << t.id << "] "
+                      << t.name
+                      << " | " << t.priorityToString() << "\n";
+            hasPending = true;
+        }
     }
-    std::cout << "------------------\n\n";
+    if (!hasPending) std::cout << "No pending tasks.\n";
+
+    std::cout << "\n--- DONE ---\n";
+    for (const Task& t : tasks) {
+        if (t.status == TaskStatus::DONE) {
+            std::cout << "[" << t.id << "] "
+                      << t.name
+                      << " | " << t.priorityToString() << "\n";
+            hasDone = true;
+        }
+    }
+    if (!hasDone) std::cout << "No completed tasks.\n";
+
+    std::cout << "\n";
 }
 
 void TaskQueue::showStatus() const {
